@@ -45,12 +45,21 @@ namespace DatingApp.webapi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            // try
+            // {
+                //throw new Exception("You can not login  ..");                
+            //}
+            // catch(Exception ex)
+            // {
+            //     return StatusCode(500, "not allowed to login");            
+            // }
+            
+
             var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
 
-            if(userFromRepo == null) return Unauthorized("Not authorized");
+            if(userFromRepo == null) return Unauthorized("Incorrect username or password");
 
             //return jwt token here  ..
-
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier , userFromRepo.Id.ToString()),
                 new Claim(ClaimTypes.Name , userFromRepo.Username)
