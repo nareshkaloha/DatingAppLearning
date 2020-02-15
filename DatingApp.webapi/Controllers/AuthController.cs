@@ -45,6 +45,7 @@ namespace DatingApp.webapi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            //below exception was for testing the global exception handler  ..
             // try
             // {
                 //throw new Exception("You can not login  ..");                
