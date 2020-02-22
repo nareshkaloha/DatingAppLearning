@@ -1,8 +1,8 @@
 using System;
 
-namespace DatingApp.webapi.Model
+namespace DatingApp.webapi.Dto
 {
-    public class Photo
+    public class PhotoDto
     {
         public int Id { get; set; }
         public string PublicId { get; set; }
@@ -11,6 +11,5 @@ namespace DatingApp.webapi.Model
         public DateTime CreatedDate { get; set; }
         public bool IsMain { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
     }
 }
