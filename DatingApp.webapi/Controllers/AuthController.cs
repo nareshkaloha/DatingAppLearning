@@ -44,11 +44,15 @@ namespace DatingApp.webapi.Controllers
             if (await _repo.UserExists(userForRegistrationDto.Username))
                 return BadRequest("username already exists");
 
-            var createdUser = await _repo.Register(new Model.User() { Username = userForRegistrationDto.Username }, userForRegistrationDto.Password);
+            var userForCreate = _mapper.Map<User>(userForRegistrationDto);
+
+            var createdUser = await _repo.Register(userForCreate, userForRegistrationDto.Password);
+
+            var userListDto = _mapper.Map<UserForListDto>(createdUser);
 
             //return CreatedAtRoute()
             //return Ok(createdUser); cant send the user as its properties like hash/salt which client does not need to know .. send dto instead
-            return StatusCode(201);
+            return CreatedAtRoute("GetUser", new {Controller="Users", Id = createdUser.Id}, userListDto);
         }
 
         [HttpPost("login")]
