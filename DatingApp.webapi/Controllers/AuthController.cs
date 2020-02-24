@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.webapi.Data;
 using DatingApp.webapi.Dto;
 using DatingApp.webapi.Model;
@@ -21,9 +22,17 @@ namespace DatingApp.webapi.Controllers
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _configuration;
+        private readonly IDatingRepository _repoUser;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration configuration)
+        public AuthController(
+            IAuthRepository repo, 
+            IConfiguration configuration, 
+            IDatingRepository repoUser,
+            IMapper mapper)
         {
+            this._repoUser = repoUser;
+            this._mapper = mapper;
             this._repo = repo;
             this._configuration = configuration;
         }
@@ -32,10 +41,10 @@ namespace DatingApp.webapi.Controllers
         {
             userForRegistrationDto.Username = userForRegistrationDto.Username.ToLower();
 
-            if(await _repo.UserExists(userForRegistrationDto.Username))
+            if (await _repo.UserExists(userForRegistrationDto.Username))
                 return BadRequest("username already exists");
 
-            var createdUser= await _repo.Register(new Model.User() {Username = userForRegistrationDto.Username}, userForRegistrationDto.Password);
+            var createdUser = await _repo.Register(new Model.User() { Username = userForRegistrationDto.Username }, userForRegistrationDto.Password);
 
             //return CreatedAtRoute()
             //return Ok(createdUser); cant send the user as its properties like hash/salt which client does not need to know .. send dto instead
@@ -48,17 +57,17 @@ namespace DatingApp.webapi.Controllers
             //below exception was for testing the global exception handler  ..
             // try
             // {
-                //throw new Exception("You can not login  ..");                
+            //throw new Exception("You can not login  ..");                
             //}
             // catch(Exception ex)
             // {
             //     return StatusCode(500, "not allowed to login");            
             // }
-            
+
 
             var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
 
-            if(userFromRepo == null) return Unauthorized("Incorrect username or password");
+            if (userFromRepo == null) return Unauthorized("Incorrect username or password");
 
             //return jwt token here  ..
             var claims = new[] {
@@ -70,7 +79,7 @@ namespace DatingApp.webapi.Controllers
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var tokenDescriptor = new SecurityTokenDescriptor 
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = System.DateTime.Now.AddDays(1),
@@ -81,9 +90,11 @@ namespace DatingApp.webapi.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-           return Ok( new {
-               token = tokenHandler.WriteToken(token)
-           });
+            return Ok(new
+            {
+                token = tokenHandler.WriteToken(token),
+                user = _mapper.Map<UserForListDto>( await _repoUser.GetUser(userFromRepo.Id))
+            });
         }
     }
 }

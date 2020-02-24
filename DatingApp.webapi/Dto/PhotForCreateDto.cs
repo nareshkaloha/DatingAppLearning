@@ -8,7 +8,7 @@ namespace DatingApp.webapi.Dto
         public string PublicId { get; set; }
         public string Url { get; set; }
         public string Description { get; set; }
-        public IFormFile PhotoFile { get; set; }      
+        public IFormFile File { get; set; }      
         public bool IsMain { get; set; }       
         public DateTime DateAdded { get; set; }
         public PhotForCreateDto()
