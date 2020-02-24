@@ -22,10 +22,12 @@ export class MemberEditComponent implements OnInit {
     ) { }
   @ViewChild('frmUserEdit', {static: false}) frmUserEdit: NgForm;
   user: User;
+  photoUrl: string;
 
   ngOnInit() {
     this.route.data.subscribe( d => {
       this.user = d['user'];
+      this.authService.currentPhotoUrl.subscribe(resp => this.photoUrl = resp);
     });
   }
 
@@ -38,5 +40,9 @@ export class MemberEditComponent implements OnInit {
     }, err => {
       this.alertify.error(err);
     });
+  }
+
+  updateProfilePhoto(photoUrl: string) {
+    this.user.photoUrl = photoUrl;
   }
 }
