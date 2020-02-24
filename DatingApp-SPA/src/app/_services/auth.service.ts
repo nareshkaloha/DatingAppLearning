@@ -23,7 +23,7 @@ export class AuthService {
     this.photoUrl.next(photUrl);
   }
 
-  login(userCredentials: any) {
+  login(userCredentials: User) {
     return this.http.post(this.baseURL + 'login', userCredentials).pipe(
       map( (resp: any) => {
         const user = resp;
@@ -39,7 +39,7 @@ export class AuthService {
     );
   }
 
-  register(user: any) {
+  register(user: User) {
     return this.http.post(this.baseURL + 'register', user);
   }
 

@@ -1,18 +1,100 @@
-<form #registerForm="ngForm" (ngSubmit)="register()">
+<form (ngSubmit)="register()" [formGroup]="registerForm">
     <h2 class="text-center text-primary">Sign Up</h2>
     <hr>
   
     <div class="form-group">
-      <input type="text" class="form-control" placeholder="Username" name="username" required [(ngModel)]="model.username">
+      <label class="control-label" style="margin-right:10px">I am a: </label>
+      <label class="radio-inline">
+        <input class="mr-3" type="radio" value="male" formControlName="gender">Male
+      </label>
+      <label class="radio-inline ml-3">
+        <input class="mr-3" type="radio" value="female" formControlName="gender">Female
+      </label>
+    </div>
+
+    <div class="form-group">
+      <input [ngClass]="{'is-invalid': this.knownAs.errors && this.knownAs.touched}" class="form-control"
+        placeholder="Known as" formControlName="knownAs">
+      <div class="invalid-feedback" *ngIf="this.knownAs.touched && this.knownAs.hasError('required')">Known as is required</div>
+    </div>
+
+    <div class="form-group">
+      <input [ngClass]="{'is-invalid': this.dateOfBirth.errors && this.dateOfBirth.touched}" class="form-control"
+        placeholder="Date of Birth" formControlName="dateOfBirth" type="text" bsDatepicker [bsConfig]="bsConfig">
+      <div class="invalid-feedback" *ngIf="this.dateOfBirth.touched && this.dateOfBirth.hasError('required')">Date of Birth is required</div>
+    </div>
+
+    <div class="form-group">
+      <input [ngClass]="{'is-invalid': this.city.errors && this.city.touched}" class="form-control"
+        placeholder="City" formControlName="city">
+      <div class="invalid-feedback" *ngIf="this.city.touched && this.city.hasError('required')">City is required</div>
     </div>
   
     <div class="form-group">
-      <input type="password" class="form-control" placeholder="Password" name="password" required [(ngModel)]="model.password">
+      <input [ngClass]="{'is-invalid': this.country.errors && this.country.touched}" class="form-control"
+        placeholder="Country" formControlName="country">
+      <div class="invalid-feedback" *ngIf="this.country.touched && this.country.hasError('required')">Country is required</div>
+    </div>
+    
+    <div class="form-group">
+      <input 
+        type="text" 
+        class="form-control " 
+        [ngClass]="{'is-invalid': this.username.errors && this.username.touched}"
+        placeholder="username" 
+        formControlName="username">         
+        <div 
+          class="invalid-feedback"
+          *ngIf="this.username.touched && this.username.hasError('required')">
+          username is required
+        </div>
+    </div>
+  
+    <div class="form-group">
+      <input 
+        type="password" 
+        class="form-control" 
+        [ngClass]="{'is-invalid': this.password.touched && this.password.errors }"
+        placeholder="password" 
+        formControlName="password">
+        <div 
+          class="invalid-feedback"
+          *ngIf="this.password.touched && this.password.hasError('required')">
+          password is required 
+        </div>
+        <div 
+          class="invalid-feedback"
+          *ngIf="this.password.touched && this.password.hasError('minlength')">
+          password minimum length is 4
+        </div>
+    </div>
+
+    <div class="form-group">
+      <input 
+        type="password" 
+        class="form-control" 
+        [ngClass]="{'is-invalid': this.confirmPassword.touched && (this.confirmPassword.errors || this.registerForm.hasError('passwordsMismatch'))}"
+        placeholder="confirm password" 
+        formControlName="confirmPassword">
+        <div
+          class="invalid-feedback"
+          *ngIf="this.confirmPassword.touched && this.confirmPassword.hasError('required')">
+          confirm password is required
+        </div>
+        <div
+        class="invalid-feedback"
+        *ngIf="this.confirmPassword.touched && this.registerForm.hasError('passwordsMismatch')">
+        password and confirm password should match
+      </div>
     </div>
   
     <div class="form-group text-center">
-      <button class="btn btn-success mr-2" type="submit">Register</button>
+      <button class="btn btn-success mr-2" type="submit" [disabled]="!this.registerForm.valid">Register</button>
       <button class="btn btn-default" type="button" (click)="cancel()">Cancel</button>
     </div>
     
   </form>
+  <p>
+    <!-- {{ registerForm.value | json }}
+    {{ registerForm.status }} -->
+  </p>
