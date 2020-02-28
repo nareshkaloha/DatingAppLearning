@@ -9,6 +9,8 @@ import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
 
 @Injectable()
 export class MembersResolver implements Resolve<User[]> {
+    private pageNumber = 1;
+    private pageSize = 10;
 
     constructor(private userService: UserService,
                 private alerify: AlertifyService,
@@ -16,7 +18,7 @@ export class MembersResolver implements Resolve<User[]> {
     }
 
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-        return this.userService.getUsers().pipe(
+        return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
             catchError(err => {
                 this.alerify.error(err);
                 this.router.navigate(['/home']);
