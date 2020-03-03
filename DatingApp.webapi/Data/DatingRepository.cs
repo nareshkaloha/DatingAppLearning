@@ -25,7 +25,7 @@ namespace DatingApp.webapi.Data
         public void Delete<T>(T entity) where T : class
         {
             _context.Remove(entity);
-        }
+        }     
 
         public async Task<Photo> GetMainPhotoForUser(int userId)
         {
@@ -58,6 +58,18 @@ namespace DatingApp.webapi.Data
             users = users.Where(u => u.Id != userParams.UserId);
             users = users.Where(gen => gen.Gender == userParams.Gender);
 
+            if(userParams.Likers)
+            {
+                var likers = await GetLikers(userParams.UserId);
+                users = users.Where(u => likers.Contains(u.Id));
+            }
+
+            if(userParams.Likees)
+            {
+                var likees = await GetLikees(userParams.UserId);
+                users = users.Where(u => likees.Contains(u.Id));
+            }
+
             if(userParams.MinAge !=18)
             {
                 users = users.Where(mg => mg.DateOfBirth <= DateTime.Today.AddYears(-userParams.MinAge));
@@ -85,6 +97,22 @@ namespace DatingApp.webapi.Data
             return pagedData;
         }   
 
+        private async Task<IEnumerable<int>> GetLikers( int userId)
+        {          
+            return (await _context.Users.Include(t => t.Likers).FirstOrDefaultAsync(u => u.Id == userId))
+                        .Likers.Where(t => t.LikeeId == userId).Select( m => m.LikerId);
+        }
+
+        private async Task<IEnumerable<int>> GetLikees(int userId)
+        {
+            return (await _context.Users.Include(t => t.Likees).FirstOrDefaultAsync(u => u.Id ==userId))
+                        .Likees.Where(t => t.LikerId == userId).Select(m => m.LikeeId);
+        }      
+
+        public async Task<Like> GetLike(int likerId, int likeeId)
+        {
+            return await _context.Likes.Where(lk=> lk.LikerId == likerId && lk.LikeeId == likeeId).FirstOrDefaultAsync();
+        }
         public async Task<bool> SaveAll()
         {
             return await _context.SaveChangesAsync() > 0;
