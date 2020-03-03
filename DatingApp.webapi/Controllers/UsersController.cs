@@ -75,5 +75,39 @@ namespace DatingApp.webapi.Controllers
 
             return NoContent();
         }
+
+        [HttpPost]
+        [Route("{id}/like/{likeeId}")]
+        public async Task<IActionResult> LikeUser(int id, int likeeId)
+        {
+            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var likeFromRepo = await _repo.GetLike(id, likeeId);
+
+            if(likeFromRepo !=null)
+            {
+                return BadRequest("You already liked this user");
+            }
+
+            var likeeFromRepo = _repo.GetUser(likeeId);
+
+            if(likeeFromRepo == null)
+            {
+                return NotFound("likee not found");
+            }
+
+            var likeToBeCreated = new Like() { LikerId = id, LikeeId = likeeId};
+            _repo.Add(likeToBeCreated);
+
+            if(await _repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Failed to like user");
+        }
     }
 }
