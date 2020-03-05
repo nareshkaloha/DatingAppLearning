@@ -44,7 +44,7 @@
                 <div *ngIf="username.errors?.minlength">minimum length for username is {{ username.errors.minlength.requiredLength }} </div>
             </div>           
 
-            <input type="password" id="password" name="password" class="form-control mr-sm-2" type="text" placeholder="password" required minlength=4 ngModel #password="ngModel">
+            <input type="password" id="password" name="password" class="form-control mr-sm-2" placeholder="password" required minlength=4 ngModel #password="ngModel">
             <div class="danger alert-danger" *ngIf="password.touched && password.errors">
                 <div *ngIf="password.errors?.required">password is required</div>
                 <div *ngIf="password.errors?.minlength">minimum length for password is {{ password.errors.minlength.requiredLength }} </div>
