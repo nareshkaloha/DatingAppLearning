@@ -32,5 +32,10 @@ namespace DatingApp.webapi.Helpers
 
             return age;
         }
+
+        public static void AddCreatedAtLocation(this HttpResponse httpResponse)
+        {
+            httpResponse.Headers.Add("Access-Control-Expose-Headers", "Location");
+        }
     }
 }
