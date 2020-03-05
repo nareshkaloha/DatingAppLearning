@@ -1,3 +1,4 @@
+import { MessagesResolver } from './_resolvers/messages.resolver';
 import { MembersListResolver } from './_resolvers/members-list.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsavedchanges.gurad';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
@@ -15,7 +16,7 @@ import { Routes } from '@angular/router';
 
 export const appRoutes: Routes = [
     {path: 'home' , component: HomeComponent},
-    {path: 'messages' , component: MessagesComponent, canActivate: [AuthGuard]},
+    //{path: 'messages' , component: MessagesComponent, canActivate: [AuthGuard]},
     {path: 'members',
         component: MemberListComponent,
         canActivate: [AuthGuard],
@@ -25,6 +26,11 @@ export const appRoutes: Routes = [
         component: MemberDetailComponent,
         canActivate: [AuthGuard],
         resolve: { user: MemberDetailResolver}
+    },
+    {path: 'messages' ,
+        component: MessagesComponent,
+        canActivate: [AuthGuard],
+        resolve: { messages: MessagesResolver}
     },
     {
         path: 'member/edit',
