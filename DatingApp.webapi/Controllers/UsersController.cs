@@ -85,14 +85,14 @@ namespace DatingApp.webapi.Controllers
                 return Unauthorized();
             }
 
-            var likeFromRepo = await _repo.GetLike(id, likeeId);
+            var likeFromRepo =  await _repo.GetLike(id, likeeId);
 
             if(likeFromRepo !=null)
             {
                 return BadRequest("You already liked this user");
             }
 
-            var likeeFromRepo = _repo.GetUser(likeeId);
+            var likeeFromRepo =  await _repo.GetUser(likeeId);
 
             if(likeeFromRepo == null)
             {
