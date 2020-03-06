@@ -32,10 +32,33 @@ namespace DatingApp.webapi
 
         public IConfiguration Configuration { get; }
 
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(opt=> 
+            {
+                opt.UseLazyLoadingProxies();
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString"));                
+            });         
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(opt=> 
+            {
+                opt.UseLazyLoadingProxies();
+                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnectionString")); 
+            });
+
+            ConfigureServices(services);
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(opt=> opt.UseSqlite(Configuration.GetConnectionString("DefaultConnectionString")));
+            //services.AddDbContext<DataContext>(opt=> opt.UseSqlite(Configuration.GetConnectionString("DefaultConnectionString")));
+
             services.AddControllers().AddNewtonsoftJson(options => 
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -74,7 +97,7 @@ namespace DatingApp.webapi
 
                        if(error!=null)
                        {
-                           context.Response.AddApplicationError("different message");
+                           context.Response.AddApplicationError("please try later ..");
                            await context.Response.WriteAsync("error happended on server , its logged , you dont need to know what went wrong");
                        }
                    });
@@ -84,16 +107,16 @@ namespace DatingApp.webapi
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
             app.UseCors(x=> x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
             app.UseAuthentication();
-
             app.UseAuthorization();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
