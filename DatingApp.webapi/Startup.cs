@@ -20,6 +20,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using DatingApp.webapi.Helpers;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using DatingApp.webapi.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace DatingApp.webapi
 {
@@ -48,7 +53,7 @@ namespace DatingApp.webapi
             services.AddDbContext<DataContext>(opt=> 
             {
                 opt.UseLazyLoadingProxies();
-                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnectionString")); 
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")); 
             });
 
             ConfigureServices(services);
@@ -57,19 +62,23 @@ namespace DatingApp.webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<DataContext>(opt=> opt.UseSqlite(Configuration.GetConnectionString("DefaultConnectionString")));
+            //services.AddDbContext<DataContext>(opt=> opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
 
-            services.AddControllers().AddNewtonsoftJson(options => 
+            IdentityBuilder builder = services.AddIdentityCore<User>(opt => 
             {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 6;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
             });
-            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
-            services.AddCors();
-            services.AddAutoMapper(typeof(DatingRepository).Assembly);
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IDatingRepository, DatingRepository>();
-            services.AddScoped<LogUserLastActivity>();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+            builder.AddEntityFrameworkStores<DataContext>();
+            builder.AddRoleManager<RoleManager<Role>>();
+            builder.AddRoleValidator<RoleValidator<Role>>();
+            builder.AddSignInManager<SignInManager<User>>();
+
+             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
                         ValidateIssuerSigningKey = true,
@@ -78,6 +87,27 @@ namespace DatingApp.webapi
                         ValidateIssuer = false
                     };
                 });
+
+            services.AddControllers(options => 
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();     
+
+                options.Filters.Add( new AuthorizeFilter(policy));
+            }
+            )
+            .AddNewtonsoftJson(opt => 
+            {
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+            services.AddCors();
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
+            services.AddScoped<LogUserLastActivity>();           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

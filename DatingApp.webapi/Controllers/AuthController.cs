@@ -9,6 +9,7 @@ using AutoMapper;
 using DatingApp.webapi.Data;
 using DatingApp.webapi.Dto;
 using DatingApp.webapi.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ namespace DatingApp.webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
@@ -76,7 +78,7 @@ namespace DatingApp.webapi.Controllers
             //return jwt token here  ..
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier , userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name , userFromRepo.Username)
+                new Claim(ClaimTypes.Name , userFromRepo.UserName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
