@@ -1,3 +1,4 @@
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { MessagesResolver } from './_resolvers/messages.resolver';
 import { MembersListResolver } from './_resolvers/members-list.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsavedchanges.gurad';
@@ -43,6 +44,11 @@ export const appRoutes: Routes = [
         component: ListsComponent,
         canActivate: [AuthGuard],
         resolve: {users: MembersListResolver}
+    },
+    {path: 'admin',
+        component: AdminPanelComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['Admin', 'Moderator']}
     },
     {path: '**', redirectTo: 'home', pathMatch: 'full'}
 ];

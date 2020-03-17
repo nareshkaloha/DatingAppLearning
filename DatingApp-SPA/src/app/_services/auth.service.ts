@@ -1,3 +1,4 @@
+import { RouterModule } from '@angular/router';
 import { User } from './../_models/user';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
@@ -50,5 +51,19 @@ export class AuthService {
     const retValue = !this.jwtDecode.isTokenExpired(token);
     //console.log(retValue)    ;
     return retValue;
+  }
+
+  isInAllowedRole(allowedRoles): boolean {
+    let isMatch = false;
+    const userRoles = this.decodedToken.role as Array<string>;
+
+    allowedRoles.forEach(element => {
+      if (userRoles.includes(element)) {
+        isMatch = true;
+        return;
+      }
+    });
+
+    return isMatch;
   }
 }

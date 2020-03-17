@@ -20,7 +20,6 @@ namespace DatingApp.webapi
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            //var host = CreateWebHostBuilder(args).Build();
 
             using( var scope = host.Services.CreateScope())
             {
@@ -30,8 +29,9 @@ namespace DatingApp.webapi
                 {
                     var context = Services.GetRequiredService<DataContext>();
                     var userManager = Services.GetRequiredService<UserManager<User>>();
+                    var roleManager = Services.GetRequiredService<RoleManager<Role>>();
                     context.Database.Migrate();
-                    Seed.UserSeed(userManager);
+                    Seed.UserSeed(userManager, roleManager);
                 }
                 catch(Exception ex)
                 {
@@ -42,11 +42,6 @@ namespace DatingApp.webapi
             host.Run();
         }
 
-        // public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        // WebHost.CreateDefaultBuilder(args)
-        //     .UseStartup<Startup>();
-
-        // Below does not work .. could not create a new migration after removing all the old ones  ..
         public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(webBuilder =>

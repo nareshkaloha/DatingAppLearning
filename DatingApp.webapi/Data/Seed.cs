@@ -40,17 +40,41 @@ namespace DatingApp.webapi.Data
 
         //refactored after using aspnet core identity ..
 
-        public static void UserSeed(UserManager<User> userManager)
+        public static void UserSeed(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             if(!userManager.Users.Any())
             {
+                 var roles = new List<Role>()
+                {
+                    new Role{Name = "Member"},
+                    new Role{Name = "VIP"},
+                    new Role{Name = "Moderator"},
+                    new Role{Name = "Admin"}
+                };
+
+                foreach (var role in roles)
+                {
+                    roleManager.CreateAsync(role).Wait();
+                }
+
                  var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
                 var users = JsonConvert.DeserializeObject<List<User>>(userData);
 
                 foreach(var usr in users)
                 {
                     userManager.CreateAsync(usr, "p@ssword!").Wait();
+                    userManager.AddToRoleAsync(usr, "Member").Wait();
                 }
+            }
+
+            //create an admin user
+            var user = new User() {UserName = "Admin"};
+            var userResult  = userManager.CreateAsync(user, "p@ssword!").Result;
+
+            if(userResult.Succeeded)
+            {
+                var admin = userManager.FindByNameAsync("Admin").Result;
+                userManager.AddToRolesAsync(admin, new [] {"Admin", "Moderator"}).Wait();
             }
         }   
     }
