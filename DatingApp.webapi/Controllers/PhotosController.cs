@@ -163,7 +163,7 @@ namespace DatingApp.webapi.Controllers
             //     return Unauthorized();
             // }
 
-            if(photoFromRepo.IsMain)
+            if(photoFromRepo.IsMain && !roles.Contains("Admin") && !roles.Contains("Moderator"))
             {
                 return BadRequest("you can not delete your main photo");
             }
