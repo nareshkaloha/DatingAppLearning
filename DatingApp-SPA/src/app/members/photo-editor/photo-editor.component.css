@@ -4,10 +4,23 @@ img.img-thumbnail {
     margin-bottom: 2px;
 }
 
+img.img-pending {
+    opacity: 0.5;
+}
+
 .nv-file-over {
     border: dotted 3px red;
 }
 
 input[type=file] {
     color: transparent;
+}
+
+.approvaltext {
+    position: absolute;
+    bottom: 50%;
+    font-size: small;
+    color: red;
+    font-weight: bold;
+    margin-left: 10px;
 }

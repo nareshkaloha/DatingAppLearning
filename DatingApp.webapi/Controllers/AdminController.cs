@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.webapi.Data;
+using DatingApp.webapi.Dto;
 using DatingApp.webapi.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -65,9 +66,34 @@ namespace DatingApp.webapi.Controllers
 
         [HttpGet("photosForModeration")]
         [Authorize("AdminOrModeratorPhotoOnly")]
-        public IActionResult PhotosForModeration()
+        public async Task<IActionResult> PhotosForModeration()
         {
-            return Ok("only admin or moderators can access this");
+            var photos = await _context.Photos.Where(t => t.IsApproved == null)
+            .Select( m => new PhotoForModerationDto()
+            {
+                Id = m.Id,
+                PublicId = m.PublicId,
+                Url = m.Url,
+                Description = m.Description,
+                CreatedDate = m.CreatedDate,
+                IsMain = m.IsMain,
+                UserId = m.UserId,
+                UserName = m.User.UserName
+            }).ToListAsync();
+
+            return Ok(photos);
+        }
+
+        [HttpPost("approvePhoto/{id}")]
+        [Authorize("AdminOrModeratorPhotoOnly")]
+        public async Task<IActionResult> ApprovePhoto(int id)
+        {
+            var photoForUpdate = await _context.Photos.Where(t => t.Id == id).FirstOrDefaultAsync();
+            photoForUpdate.IsApproved = true;
+
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

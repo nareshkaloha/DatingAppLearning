@@ -10,5 +10,6 @@ namespace DatingApp.webapi.Dto
         public DateTime CreatedDate { get; set; }
         public bool IsMain { get; set; }
         public int UserId { get; set; }
+        public bool? IsApproved { get; set; }
     }
 }

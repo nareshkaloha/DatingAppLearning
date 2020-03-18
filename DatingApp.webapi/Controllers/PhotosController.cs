@@ -9,6 +9,7 @@ using DatingApp.webapi.Dto;
 using DatingApp.webapi.Helpers;
 using DatingApp.webapi.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -21,17 +22,19 @@ namespace DatingApp.webapi.Controllers
         private readonly IDatingRepository _repo;
         private readonly IMapper _mapper;
         private readonly IOptions<CloudinarySettings> _options;
+        private readonly UserManager<User> _userManager;
         private readonly Cloudinary _cloudinary;
         public PhotosController(
             IDatingRepository repo, 
             IMapper mapper, 
-            IOptions<Helpers.CloudinarySettings> options
+            IOptions<Helpers.CloudinarySettings> options,
+            UserManager<User> userManager
             )
         {
             _repo = repo;
             _mapper = mapper;
             _options = options;
-
+            this._userManager = userManager;
             var cloudinaryAccount = new Account() 
             {    
                 Cloud = _options.Value.CloudName,
@@ -139,7 +142,11 @@ namespace DatingApp.webapi.Controllers
         [Route("{id}")] 
         public async Task<IActionResult> Delete(int userId, int id)
         {
-            if(userId != int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value))
+            var userFromIdentityStore  = await _userManager.FindByIdAsync(userId.ToString());
+            var roles = await _userManager.GetRolesAsync(userFromIdentityStore);
+
+            if(userId != int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value)
+                  && !roles.Contains("Admin") && !roles.Contains("Moderator"))
             {
                 return Unauthorized();
             }
@@ -151,10 +158,10 @@ namespace DatingApp.webapi.Controllers
                 return BadRequest("Photo not found");
             }
 
-            if(photoFromRepo.UserId != userId)
-            {
-                return Unauthorized();
-            }
+            // if(photoFromRepo.UserId != userId) // now admins , moderators can delete the photos ..
+            // {
+            //     return Unauthorized();
+            // }
 
             if(photoFromRepo.IsMain)
             {

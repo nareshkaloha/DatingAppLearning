@@ -53,8 +53,29 @@ namespace DatingApp.webapi.Controllers
         [HttpGet("{id}", Name="GetUser")]
         public async Task<IActionResult> GetUSer(int id)
         {
-            var user = await _repo.GetUser(id);
+            var loggedInUser = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var user =  await _repo.GetUser(id);
+            List<Photo> photos = new List<Photo>();
+
+            if(loggedInUser != id)
+            {
+                foreach(var p in user.Photos)
+                {
+                    if(p.IsApproved == true)
+                    {
+                        photos.Add(p);
+                    }
+                }    
+            }
+
             var userDto = _mapper.Map<UserForDetailedDto>(user);
+
+            if(loggedInUser != id)
+            {
+                userDto.Photos.Clear();
+                userDto.Photos = _mapper.Map<List<PhotoForDetailedDto>>(photos);
+            }
 
             return Ok(userDto);
         }
