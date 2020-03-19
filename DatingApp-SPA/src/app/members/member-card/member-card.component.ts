@@ -11,6 +11,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MemberCardComponent implements OnInit {
   @Input('UserCard') userCard: User;
+  @Input() hideFavorite: boolean;
+  
   loggedInUser: User = JSON.parse(localStorage.getItem('user'));
 
   constructor(

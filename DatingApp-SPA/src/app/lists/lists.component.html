@@ -15,7 +15,7 @@
 
   <div class="row">
     <div *ngFor="let user of users" class="col-sm-6 col-md-4 col-lg-4 col-xl-2">
-      <app-member-card [UserCard]="user"></app-member-card>
+      <app-member-card [UserCard]="user" [hideFavorite]="true"></app-member-card>
     </div>
   </div>
 
