@@ -42,7 +42,7 @@ namespace DatingApp.webapi
             services.AddDbContext<DataContext>(opt=> 
             {
                 opt.UseLazyLoadingProxies();
-                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString"));                
+                opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnectionString"));                
             });         
 
             ConfigureServices(services);
