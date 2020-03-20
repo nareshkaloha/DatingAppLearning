@@ -120,27 +120,28 @@ namespace DatingApp.webapi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler(builder=> {
-                   builder.Run(async context=> {
-                       context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            // }
+            // else
+            // {
+            //     app.UseExceptionHandler(builder=> {
+            //        builder.Run(async context=> {
+            //            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                       var error = context.Features.Get<IExceptionHandlerFeature>();
+            //            var error = context.Features.Get<IExceptionHandlerFeature>();
 
-                       if(error!=null)
-                       {
-                           context.Response.AddApplicationError("please try later ..");
-                           await context.Response.WriteAsync("error happended on server , its logged , you dont need to know what went wrong");
-                       }
-                   });
-                });
-            }
+            //            if(error!=null)
+            //            {
+            //                context.Response.AddApplicationError("please try later ..");
+            //                await context.Response.WriteAsync("error happended on server , its logged , you dont need to know what went wrong");
+            //            }
+            //        });
+            //     });
+            // }
 
+            app.UseDeveloperExceptionPage();
             //app.UseHttpsRedirection();
 
             app.UseRouting();
