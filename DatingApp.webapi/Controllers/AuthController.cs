@@ -100,6 +100,9 @@ namespace DatingApp.webapi.Controllers
 
             //with asp.net identity
             var user = await _userManager.FindByNameAsync(userForLoginDto.Username);
+
+            if(user == null) return Unauthorized("user not found in system");
+            
             var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
 
             if(result.Succeeded)
