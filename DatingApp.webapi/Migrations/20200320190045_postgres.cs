@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DatingApp.webapi.Migrations
 {
-    public partial class identity : Migration
+    public partial class postgres : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -244,6 +244,7 @@ namespace DatingApp.webapi.Migrations
                     Description = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     IsMain = table.Column<bool>(nullable: false),
+                    IsApproved = table.Column<bool>(nullable: true),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

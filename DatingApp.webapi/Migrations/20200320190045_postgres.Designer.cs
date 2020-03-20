@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.webapi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200317191206_photoisapproved")]
-    partial class photoisapproved
+    [Migration("20200320190045_postgres")]
+    partial class postgres
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
