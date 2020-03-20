@@ -67,7 +67,7 @@ namespace DatingApp.webapi.Controllers
 
             var userForCreate = _mapper.Map<User>(userForRegistrationDto);
 
-            var result = await _userManager.CreateAsync(userForCreate, "p@ssword!");
+            var result = await _userManager.CreateAsync(userForCreate, "p@ssword");
 
             var userListDto = _mapper.Map<UserForListDto>(userForCreate);
 
@@ -102,7 +102,7 @@ namespace DatingApp.webapi.Controllers
             var user = await _userManager.FindByNameAsync(userForLoginDto.Username);
 
             if(user == null) return Unauthorized("user not found in system");
-            
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
 
             if(result.Succeeded)
