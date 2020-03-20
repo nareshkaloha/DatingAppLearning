@@ -9,7 +9,7 @@ namespace DatingApp.webapi.Controllers
     {
         public IActionResult Index()
         {
-            return new PhysicalFileResult(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"), "text/HTML");
+            return new PhysicalFileResult(Path.Combine(Directory.GetCurrentDirectory(), "app/heroku_output/wwwroot", "index.html"), "text/HTML");
         }        
     }
 }
