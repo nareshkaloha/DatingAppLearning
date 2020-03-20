@@ -26,6 +26,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.0"/>
   </ItemGroup>
   <Target Name="PrePublishTarget" AfterTargets="Publish">
-  <Exec Command="dotnet ef database update" />
-</Target>
+    <!-- <Exec Command="dotnet ef database update" /> -->
+  </Target>
 </Project>
