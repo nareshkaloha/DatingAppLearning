@@ -68,6 +68,8 @@ namespace DatingApp.webapi.Controllers
             var userForCreate = _mapper.Map<User>(userForRegistrationDto);
 
             var result = await _userManager.CreateAsync(userForCreate, userForRegistrationDto.Password);
+            var createdUser = await _userManager.FindByNameAsync(userForCreate.UserName);
+            var resultRole = await _userManager.AddToRoleAsync(createdUser, "Member");
 
             var userListDto = _mapper.Map<UserForListDto>(userForCreate);
 
