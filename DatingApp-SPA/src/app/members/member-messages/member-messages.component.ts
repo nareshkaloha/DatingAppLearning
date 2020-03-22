@@ -54,23 +54,25 @@ export class MemberMessagesComponent implements OnInit {
 
     this.newMessage.recipientId = this.recipient.id;
 
-    // this.userService.sendMessage(this.authService.decodedToken.nameid, this.newMessage).subscribe((resp: Message) => {
-    //   this.messages.unshift(resp);
-    //   //this.newMessage.content = '';
-    // }, err => {
-    //   this.alertify.error(err);  
-    // });
-
-    this.userService.sendMessageRevised(this.authService.decodedToken.nameid, this.newMessage).subscribe(resp => {
-      resp.subscribe((re: Message) => {
-        //console.log(re);
-        this.messages.unshift(re);
-        this.newMessage.content = '';
-      }, err => {
-        this.alertify.error(err);
-      });
+    this.userService.sendMessage(this.authService.decodedToken.nameid, this.newMessage).subscribe((resp: Message) => {
+      this.messages.unshift(resp);
+      this.newMessage.content = '';
     }, err => {
       this.alertify.error(err);
     });
+
+    // ran into heroku https issue with this approach ..
+    // this.userService.sendMessageRevised(this.authService.decodedToken.nameid, this.newMessage).subscribe(resp => {
+    //   resp.subscribe((re: Message) => {
+    //     //console.log(re);
+    //     this.messages.unshift(re);
+    //     this.newMessage.content = '';
+    //   }, err => {
+    //     this.alertify.error(err);
+    //   });
+    // }, err => {
+    //   this.alertify.error(err);
+    // });
+
   }
 }
